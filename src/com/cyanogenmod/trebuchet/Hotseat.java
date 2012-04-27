@@ -35,7 +35,7 @@ public class Hotseat extends FrameLayout {
     private int mCellCountY;
     private boolean mIsLandscape;
 
-    private static final int DEFAULT_CELL_COUNT_X = 5;
+    private static final int DEFAULT_CELL_COUNT_X = 6;
     private static final int DEFAULT_CELL_COUNT_Y = 1;
 
     public Hotseat(Context context) {
@@ -78,7 +78,7 @@ public class Hotseat extends FrameLayout {
         return mIsLandscape ? (mContent.getCountY() - (rank + 1)) : 0;
     }
     public static boolean isAllAppsButtonRank(int rank) {
-        return rank == sAllAppsButtonRank;
+        return false;//rank == sAllAppsButtonRank;
     }
 
     @Override
@@ -94,7 +94,7 @@ public class Hotseat extends FrameLayout {
 
     void resetLayout() {
         mContent.removeAllViewsInLayout();
-
+/*
         // Add the Apps button
         Context context = getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -129,5 +129,6 @@ public class Hotseat extends FrameLayout {
         int y = getCellYFromOrder(sAllAppsButtonRank);
         mContent.addViewToCellLayout(allAppsButton, -1, 0, new CellLayout.LayoutParams(x,y,1,1),
                 true);
+*/
     }
 }

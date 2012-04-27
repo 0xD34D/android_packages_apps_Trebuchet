@@ -202,7 +202,9 @@ public final class Launcher extends Activity
     private FolderInfo mFolderInfo;
 
     private Hotseat mHotseat;
+	private Hotseat mHotseatTop;
     private View mAllAppsButton;
+	private View mSettingsButton;
 
     private SearchDropTargetBar mSearchDropTargetBar;
     private AppsCustomizeTabHost mAppsCustomizeTabHost;
@@ -793,6 +795,11 @@ public final class Launcher extends Activity
             mHotseat.setup(this);
         }
 
+        mHotseatTop = (Hotseat) findViewById(R.id.hotseat_top);
+        if (mHotseatTop != null) {
+            mHotseatTop.setup(this);
+        }
+
         // Setup the workspace
         mWorkspace.setHapticFeedbackEnabled(false);
         mWorkspace.setOnLongClickListener(this);
@@ -824,6 +831,19 @@ public final class Launcher extends Activity
         mAllAppsButton = findViewById(R.id.all_apps_button);
         if (mAllAppsButton != null) {
             mAllAppsButton.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_DOWN) {
+                        onTouchDownAllAppsButton(v);
+                    }
+                    return false;
+                }
+            });
+        }
+        // Get the settings button
+        mSettingsButton = findViewById(R.id.settings_button);
+        if (mSettingsButton != null) {
+            mSettingsButton.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_DOWN) {
@@ -1773,7 +1793,9 @@ public final class Launcher extends Activity
             } else {
                 onClickAllAppsButton(v);
             }
-        }
+        } else if (v == mSettingsButton) {
+			onClickSettingsButton(v);
+		}
     }
 
     public boolean onTouch(View v, MotionEvent event) {
@@ -1816,6 +1838,11 @@ public final class Launcher extends Activity
     public void onClickAllAppsButton(View v) {
         showAllApps(true);
     }
+
+	public void onClickSettingsButton(View v) {
+		//startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
+		openOptionsMenu();
+	}
 
     public void onTouchDownAllAppsButton(View v) {
         // Provide the same haptic feedback that the system offers for virtual keys.
@@ -1991,6 +2018,12 @@ public final class Launcher extends Activity
             cl.setFolderLeaveBehindCell(lp.cellX, lp.cellY);
         }
 
+        if (info.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT_TOP) {
+            CellLayout cl = (CellLayout) fi.getParent().getParent();
+            CellLayout.LayoutParams lp = (CellLayout.LayoutParams) fi.getLayoutParams();
+            cl.setFolderLeaveBehindCell(lp.cellX, lp.cellY);
+        }
+
         ObjectAnimator oa = ObjectAnimator.ofPropertyValuesHolder(fi, alpha, scaleX, scaleY);
         oa.setDuration(getResources().getInteger(R.integer.config_folderAnimDuration));
         oa.start();
@@ -2005,6 +2038,10 @@ public final class Launcher extends Activity
         FolderInfo info = (FolderInfo) fi.getTag();
         CellLayout cl = null;
         if (info.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
+            cl = (CellLayout) fi.getParent().getParent();
+        }
+
+        if (info.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT_TOP) {
             cl = (CellLayout) fi.getParent().getParent();
         }
 
@@ -2095,7 +2132,7 @@ public final class Launcher extends Activity
         // The hotseat touch handling does not go through Workspace, and we always allow long press
         // on hotseat items.
         final View itemUnderLongClick = longClickCellInfo.cell;
-        boolean allowLongPress = isHotseatLayout(v) || mWorkspace.allowLongPress();
+        boolean allowLongPress = isHotseatLayout(v) || isHotseatTopLayout(v) || mWorkspace.allowLongPress();
         if (allowLongPress && !mDragController.isDragging()) {
             if (itemUnderLongClick == null) {
                 // User long pressed on empty space
@@ -2116,8 +2153,15 @@ public final class Launcher extends Activity
         return mHotseat != null && layout != null &&
                 (layout instanceof CellLayout) && (layout == mHotseat.getLayout());
     }
+    boolean isHotseatTopLayout(View layout) {
+        return mHotseatTop != null && layout != null &&
+                (layout instanceof CellLayout) && (layout == mHotseatTop.getLayout());
+    }
     Hotseat getHotseat() {
         return mHotseat;
+    }
+    Hotseat getHotseatTop() {
+        return mHotseatTop;
     }
     SearchDropTargetBar getSearchBar() {
         return mSearchDropTargetBar;
@@ -2133,7 +2177,13 @@ public final class Launcher extends Activity
             } else {
                 return null;
             }
-        } else {
+        } else if (container == LauncherSettings.Favorites.CONTAINER_HOTSEAT_TOP) {
+            if (mHotseatTop != null) {
+                return mHotseatTop.getLayout();
+            } else {
+                return null;
+            }
+		} else {
             return (CellLayout) mWorkspace.getChildAt(screen);
         }
     }
@@ -2704,8 +2754,12 @@ public final class Launcher extends Activity
             if (animated) {
                 int duration = mSearchDropTargetBar.getTransitionInDuration();
                 mHotseat.animate().alpha(1f).setDuration(duration);
+				if (mHotseatTop != null)
+					mHotseatTop.animate().alpha(1f).setDuration(duration);
             } else {
                 mHotseat.setAlpha(1f);
+				if (mHotseatTop != null)
+					mHotseatTop.setAlpha(1f);
             }
         }
     }
@@ -2718,8 +2772,12 @@ public final class Launcher extends Activity
             if (animated) {
                 int duration = mSearchDropTargetBar.getTransitionOutDuration();
                 mHotseat.animate().alpha(0f).setDuration(duration);
+				if (mHotseatTop != null)
+					mHotseatTop.animate().alpha(0f).setDuration(duration);
             } else {
                 mHotseat.setAlpha(0f);
+				if (mHotseatTop != null)
+					mHotseatTop.setAlpha(0f);
             }
         }
     }
@@ -3108,6 +3166,9 @@ public final class Launcher extends Activity
         if (mHotseat != null) {
             mHotseat.resetLayout();
         }
+		if (mHotseatTop != null) {
+			mHotseatTop.resetLayout();
+		}
     }
 
     /**
@@ -3125,6 +3186,11 @@ public final class Launcher extends Activity
             // Short circuit if we are loading dock items for a configuration which has no dock
             if (item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT &&
                     mHotseat == null) {
+                continue;
+            }
+
+            if (item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT_TOP &&
+                    mHotseatTop == null) {
                 continue;
             }
 

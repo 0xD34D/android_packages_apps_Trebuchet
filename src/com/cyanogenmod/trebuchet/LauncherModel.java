@@ -226,7 +226,8 @@ public class LauncherModel extends BroadcastReceiver {
                 // as in Workspace.onDrop. Here, we just add/remove them from the list of items
                 // that are on the desktop, as appropriate
                 if (modelItem.container == LauncherSettings.Favorites.CONTAINER_DESKTOP ||
-                        modelItem.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
+                        modelItem.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT ||
+						modelItem.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT_TOP) {
                     if (!sWorkspaceItems.contains(modelItem)) {
                         sWorkspaceItems.add(modelItem);
                     }
@@ -256,6 +257,9 @@ public class LauncherModel extends BroadcastReceiver {
         if (context instanceof Launcher && screen < 0 &&
                 container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
             item.screen = ((Launcher) context).getHotseat().getOrderInHotseat(cellX, cellY);
+        } else if (context instanceof Launcher && screen < 0 &&
+                container == LauncherSettings.Favorites.CONTAINER_HOTSEAT_TOP) {
+            item.screen = ((Launcher) context).getHotseatTop().getOrderInHotseat(cellX, cellY);
         } else {
             item.screen = screen;
         }
@@ -415,6 +419,9 @@ public class LauncherModel extends BroadcastReceiver {
         if (context instanceof Launcher && screen < 0 &&
                 container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
             item.screen = ((Launcher) context).getHotseat().getOrderInHotseat(cellX, cellY);
+        } else if (context instanceof Launcher && screen < 0 &&
+                container == LauncherSettings.Favorites.CONTAINER_HOTSEAT_TOP) {
+            item.screen = ((Launcher) context).getHotseatTop().getOrderInHotseat(cellX, cellY);
         } else {
             item.screen = screen;
         }
@@ -446,7 +453,8 @@ public class LauncherModel extends BroadcastReceiver {
                     case LauncherSettings.Favorites.ITEM_TYPE_APPLICATION:
                     case LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT:
                         if (item.container == LauncherSettings.Favorites.CONTAINER_DESKTOP ||
-                                item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
+                                item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT ||
+								item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT_TOP) {
                             sWorkspaceItems.add(item);
                         }
                         break;
@@ -913,7 +921,8 @@ public class LauncherModel extends BroadcastReceiver {
         // check & update map of what's occupied; used to discard overlapping/invalid items
         private boolean checkItemPlacement(ItemInfo occupied[][][], ItemInfo item) {
             int containerIndex = item.screen;
-            if (item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
+            if (item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT ||
+					item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT_TOP) {
                 // Return early if we detect that an item is under the hotseat button
                 if (Hotseat.isAllAppsButtonRank(item.screen)) {
                     return false;
@@ -1063,6 +1072,7 @@ public class LauncherModel extends BroadcastReceiver {
                                 switch (container) {
                                 case LauncherSettings.Favorites.CONTAINER_DESKTOP:
                                 case LauncherSettings.Favorites.CONTAINER_HOTSEAT:
+                                case LauncherSettings.Favorites.CONTAINER_HOTSEAT_TOP:
                                     sWorkspaceItems.add(info);
                                     break;
                                 default:
@@ -1108,6 +1118,7 @@ public class LauncherModel extends BroadcastReceiver {
                             switch (container) {
                                 case LauncherSettings.Favorites.CONTAINER_DESKTOP:
                                 case LauncherSettings.Favorites.CONTAINER_HOTSEAT:
+                                case LauncherSettings.Favorites.CONTAINER_HOTSEAT_TOP:
                                     sWorkspaceItems.add(folderInfo);
                                     break;
                             }
@@ -1142,7 +1153,8 @@ public class LauncherModel extends BroadcastReceiver {
 
                                 container = c.getInt(containerIndex);
                                 if (container != LauncherSettings.Favorites.CONTAINER_DESKTOP &&
-                                    container != LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
+                                    container != LauncherSettings.Favorites.CONTAINER_HOTSEAT &&
+									container != LauncherSettings.Favorites.CONTAINER_HOTSEAT_TOP) {
                                     Log.e(TAG, "Widget found where container "
                                         + "!= CONTAINER_DESKTOP nor CONTAINER_HOTSEAT - ignoring!");
                                     continue;
