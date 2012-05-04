@@ -923,20 +923,16 @@ public class LauncherModel extends BroadcastReceiver {
             int containerIndex = item.screen;
             if (item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT ||
 					item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT_TOP) {
-                // Return early if we detect that an item is under the hotseat button
-                if (Hotseat.isAllAppsButtonRank(item.screen)) {
-                    return false;
-                }
-
                 // We use the last index to refer to the hotseat and the screen as the rank, so
                 // test and update the occupied state accordingly
-                if (occupied[Launcher.MAX_SCREEN_COUNT][item.screen][0] != null) {
-                    Log.e(TAG, "Error loading shortcut into hotseat " + item
+				int hotseatIdx = (item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) ? 0 : 1;
+                if (occupied[Launcher.MAX_SCREEN_COUNT][item.screen][hotseatIdx] != null) {
+                    Log.e(TAG, "Error loading sh/ortcut into hotseat " + item
                         + " into position (" + item.screen + ":" + item.cellX + "," + item.cellY
                         + ") occupied by " + occupied[Launcher.MAX_SCREEN_COUNT][item.screen][0]);
                     return false;
                 } else {
-                    occupied[Launcher.MAX_SCREEN_COUNT][item.screen][0] = item;
+                    occupied[Launcher.MAX_SCREEN_COUNT][item.screen][hotseatIdx] = item;
                     return true;
                 }
             } else if (item.container != LauncherSettings.Favorites.CONTAINER_DESKTOP) {

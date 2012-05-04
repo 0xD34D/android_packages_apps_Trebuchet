@@ -35,7 +35,7 @@ public class Hotseat extends FrameLayout {
     private int mCellCountY;
     private boolean mIsLandscape;
 
-    private static final int DEFAULT_CELL_COUNT_X = 6;
+    private static final int DEFAULT_CELL_COUNT_X = 5;
     private static final int DEFAULT_CELL_COUNT_Y = 1;
 
     public Hotseat(Context context) {
