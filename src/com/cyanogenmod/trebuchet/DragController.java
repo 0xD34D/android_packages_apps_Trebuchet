@@ -138,7 +138,7 @@ public class DragController {
         mLauncher = launcher;
         mHandler = new Handler();
         mScrollZone = launcher.getResources().getDimensionPixelSize(R.dimen.scroll_zone);
-		mVibrator = launcher.getSystemService(Context.VIBRATOR_SERVICE);
+		mVibrator = (Vibrator)launcher.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     public boolean dragging() {
