@@ -616,8 +616,8 @@ public abstract class PagedView extends ViewGroup {
                 if (child != null) {
                     float scrollProgress = getScrollProgress(screenScroll, child, i);
                     float alpha = 1 - Math.abs(scrollProgress);
-                    child.setFastAlpha(alpha);
-                    child.fastInvalidate();
+                    child.setAlpha(alpha);
+                    child.invalidate();
                 }
             }
             invalidate();

@@ -998,7 +998,7 @@ public class Workspace extends PagedView
             }
         }
         if (keepUpdating) {
-            fastInvalidate();
+            invalidate();
         }
     }
 
@@ -1294,8 +1294,8 @@ public class Workspace extends PagedView
                 float scrollProgress = getScrollProgress(screenScroll, cl, i);
                 if (mFadeInAdjacentScreens && !isSmall()) {
                     float alpha = 1 - Math.abs(scrollProgress);
-                    cl.setFastAlpha(alpha);
-                    cl.fastInvalidate();
+                    cl.setAlpha(alpha);
+                    cl.invalidate();
                 }
             }
         }
@@ -1309,13 +1309,13 @@ public class Workspace extends PagedView
                 float rotation = WORKSPACE_ROTATION * scrollProgress;
                 float translationX = getOffsetXForRotation(rotation, cl.getWidth(), cl.getHeight());
 
-                cl.setFastTranslationX(translationX);
-                cl.setFastRotationY(rotation);
+                cl.setTranslationX(translationX);
+                cl.setRotationY(rotation);
                 if (mFadeInAdjacentScreens && !isSmall()) {
                     float alpha = 1 - Math.abs(scrollProgress);
-                    cl.setFastAlpha(alpha);
+                    cl.setAlpha(alpha);
                 }
-                cl.fastInvalidate();
+                cl.invalidate();
             }
         }
         invalidate();
@@ -1331,16 +1331,16 @@ public class Workspace extends PagedView
                 // Extra translation to account for the increase in size
                 if (!in) {
                     float translationX = cl.getMeasuredWidth() * 0.1f * -scrollProgress;
-                    cl.setFastTranslationX(translationX);
+                    cl.setTranslationX(translationX);
                 }
 
-                cl.setFastScaleX(scale);
-                cl.setFastScaleY(scale);
+                cl.setScaleX(scale);
+                cl.setScaleY(scale);
                 if (mFadeInAdjacentScreens && !isSmall()) {
                     float alpha = 1 - Math.abs(scrollProgress);
-                    cl.setFastAlpha(alpha);
+                    cl.setAlpha(alpha);
                 }
-                cl.fastInvalidate();
+                cl.invalidate();
             }
         }
     }
@@ -1366,12 +1366,12 @@ public class Workspace extends PagedView
                 }
 
                 cl.setRotation(rotation);
-                cl.setFastTranslationX(translationX);
+                cl.setTranslationX(translationX);
                 if (mFadeInAdjacentScreens && !isSmall()) {
                     float alpha = 1 - Math.abs(scrollProgress);
-                    cl.setFastAlpha(alpha);
+                    cl.setAlpha(alpha);
                 }
-                cl.fastInvalidate();
+                cl.invalidate();
             }
         }
     }
@@ -1391,8 +1391,8 @@ public class Workspace extends PagedView
                 cl.setPivotX(scrollProgress < 0 ? 0 : cl.getMeasuredWidth());
                 cl.setPivotY(cl.getMeasuredHeight() * 0.5f);
                 cl.setRotationY(rotation);
-                cl.setFastAlpha(alpha);
-                cl.fastInvalidate();
+                cl.setAlpha(alpha);
+                cl.invalidate();
             }
         }
     }
@@ -1416,10 +1416,10 @@ public class Workspace extends PagedView
                     alpha = mLeftScreenAlphaInterpolator.getInterpolation(1 - scrollProgress);
                 }
 
-                cl.setFastTranslationX(translationX);
-                cl.setFastScaleX(scale);
-                cl.setFastScaleY(scale);
-                cl.setFastAlpha(alpha);
+                cl.setTranslationX(translationX);
+                cl.setScaleX(scale);
+                cl.setScaleY(scale);
+                cl.setAlpha(alpha);
 
                 // If the view has 0 alpha, we set it to be invisible so as to prevent
                 // it from accepting touches
@@ -1428,7 +1428,7 @@ public class Workspace extends PagedView
                 } else if (cl.getVisibility() != VISIBLE) {
                     cl.setVisibility(VISIBLE);
                 }
-                cl.fastInvalidate();
+                cl.invalidate();
             }
         }
         invalidate();
@@ -1444,9 +1444,9 @@ public class Workspace extends PagedView
                 if (cl != null) {
                     float scrollProgress = getScrollProgress(screenScroll, cl, i);
                     float rotation = WORKSPACE_ROTATION * scrollProgress;
-                    cl.setFastTranslationX(0.0f);
-                    cl.setFastRotationY(rotation);
-                    cl.fastInvalidate();
+                    cl.setTranslationX(0.0f);
+                    cl.setRotationY(rotation);
+                    cl.invalidate();
                 }
             }
         } else if (mOverScrollX < 0 || mOverScrollX > mMaxScrollX) {
@@ -2079,15 +2079,15 @@ public class Workspace extends PagedView
                     for (int i = 0; i < getChildCount(); i++) {
                         final CellLayout cl = (CellLayout) getPageAt(i);
                         cl.invalidate();
-                        cl.setFastTranslationX(a * mOldTranslationXs[i] + b * mNewTranslationXs[i]);
-                        cl.setFastTranslationY(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]);
-                        cl.setFastScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]);
-                        cl.setFastScaleY(a * mOldScaleYs[i] + b * mNewScaleYs[i]);
-                        cl.setFastBackgroundAlpha(
+                        cl.setTranslationX(a * mOldTranslationXs[i] + b * mNewTranslationXs[i]);
+                        cl.setTranslationY(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]);
+                        cl.setScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]);
+                        cl.setScaleY(a * mOldScaleYs[i] + b * mNewScaleYs[i]);
+                        cl.setBackgroundAlpha(
                                 a * mOldBackgroundAlphas[i] + b * mNewBackgroundAlphas[i]);
                         cl.setBackgroundAlphaMultiplier(a * mOldBackgroundAlphaMultipliers[i] +
                                 b * mNewBackgroundAlphaMultipliers[i]);
-                        cl.setFastAlpha(a * mOldAlphas[i] + b * mNewAlphas[i]);
+                        cl.setAlpha(a * mOldAlphas[i] + b * mNewAlphas[i]);
                         cl.invalidate();
                     }
                     syncChildrenLayersEnabledOnVisiblePages();
@@ -2108,7 +2108,7 @@ public class Workspace extends PagedView
                         if (mOldRotations[i] != mNewRotations[i]) {
                             cl.setRotation(a * mOldRotations[i] + b * mNewRotations[i]);
                         }
-                        cl.setFastRotationY(a * mOldRotationYs[i] + b * mNewRotationYs[i]);
+                        cl.setRotationY(a * mOldRotationYs[i] + b * mNewRotationYs[i]);
                     }
                 }
             });
