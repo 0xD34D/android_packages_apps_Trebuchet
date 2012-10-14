@@ -16,13 +16,13 @@
 
 package com.cyanogenmod.trebuchet;
 
+import java.util.ArrayList;
+
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.Log;
-
-import java.util.ArrayList;
 
 /**
  * Represents a launchable icon on the workspaces and in folders.
@@ -93,10 +93,20 @@ class ShortcutInfo extends ItemInfo {
 
     public Bitmap getIcon(IconCache iconCache) {
         if (mIcon == null) {
-            mIcon = iconCache.getIcon(this.intent);
-            this.usingFallbackIcon = iconCache.isDefaultIcon(mIcon);
+            updateIcon(iconCache);
         }
         return mIcon;
+    }
+
+    /** Returns the package name that the shortcut's intent will resolve to, or an empty string if
+     *  none exists. */
+    String getPackageName() {
+        return super.getPackageName(intent);
+    }
+
+    public void updateIcon(IconCache iconCache) {
+        mIcon = iconCache.getIcon(intent);
+        usingFallbackIcon = iconCache.isDefaultIcon(mIcon);
     }
 
     /**
@@ -145,7 +155,10 @@ class ShortcutInfo extends ItemInfo {
 
     @Override
     public String toString() {
-        return "ShortcutInfo(title=" + title.toString() + ")";
+        return "ShortcutInfo(title=" + title.toString() + "intent=" + intent + "id=" + this.id
+                + " type=" + this.itemType + " container=" + this.container + " screen=" + screen
+                + " cellX=" + cellX + " cellY=" + cellY + " spanX=" + spanX + " spanY=" + spanY
+                + " isGesture=" + isGesture + " dropPos=" + dropPos + ")";
     }
 
     public static void dumpShortcutInfoList(String tag, String label,

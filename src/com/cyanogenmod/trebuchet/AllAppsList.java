@@ -16,15 +16,15 @@
 
 package com.cyanogenmod.trebuchet;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -135,7 +135,9 @@ class AllAppsList {
 
             // Find enabled activities and add them to the adapter
             // Also updates existing activities with new labels/icons
-            for (final ResolveInfo info : matches) {
+            int count = matches.size();
+            for (int i = 0; i < count; i++) {
+                final ResolveInfo info = matches.get(i);
                 ApplicationInfo applicationInfo = findApplicationInfoLocked(
                         info.activityInfo.applicationInfo.packageName,
                         info.activityInfo.name);
@@ -193,7 +195,9 @@ class AllAppsList {
      * Returns whether <em>apps</em> contains <em>component</em>.
      */
     private static boolean findActivity(ArrayList<ApplicationInfo> apps, ComponentName component) {
-        for (final ApplicationInfo info : apps) {
+        final int N = apps.size();
+        for (int i=0; i<N; i++) {
+            final ApplicationInfo info = apps.get(i);
             if (info.componentName.equals(component)) {
                 return true;
             }

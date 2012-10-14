@@ -26,13 +26,13 @@ import android.test.RepetitiveTest;
 import android.util.Log;
 
 /**
- * Run rotation stress test using Launcher2 for 50 iterations.
+ * Run rotation stress test using Trebuchet for 50 iterations.
  */
 public class LauncherRotationStressTest extends ActivityInstrumentationTestCase2<Launcher> {
 
     private static final int NUM_ITERATIONS = 50;
     private static final int WAIT_TIME_MS = 500;
-    private static final String LOG_TAG = "LauncherRotationStressTest";
+    private static final String LOG_TAG = "TrebuchetRotationStressTest";
 
     public LauncherRotationStressTest() {
         super(Launcher.class);

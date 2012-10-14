@@ -28,10 +28,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Represents an app in AppsCustomizeView.
+ * Represents an app in AllAppsView.
  */
 class ApplicationInfo extends ItemInfo {
-    private static final String TAG = "Launcher.ApplicationInfo";
+    private static final String TAG = "Launcher2.ApplicationInfo";
 
     /**
      * The application name.
@@ -100,6 +100,12 @@ class ApplicationInfo extends ItemInfo {
         intent = new Intent(info.intent);
         flags = info.flags;
         firstInstallTime = info.firstInstallTime;
+    }
+
+    /** Returns the package name that the shortcut's intent will resolve to, or an empty string if
+     *  none exists. */
+    String getPackageName() {
+        return super.getPackageName(intent);
     }
 
     /**

@@ -18,9 +18,13 @@ package com.cyanogenmod.trebuchet;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Paint;
+import android.graphics.PointF;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.TextView;
+
+import com.cyanogenmod.trebuchet.R;
 
 
 /**
@@ -32,13 +36,14 @@ public class ButtonDropTarget extends TextView implements DropTarget, DragContro
 
     protected Launcher mLauncher;
     private int mBottomDragPadding;
+    protected TextView mText;
     protected SearchDropTargetBar mSearchDropTargetBar;
 
     /** Whether this drop target is active for the current drag */
     protected boolean mActive;
 
     /** The paint applied to the drag view on hover */
-    protected final Paint mHoverPaint = new Paint();
+    protected int mHoverColor = 0;
 
     public ButtonDropTarget(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -64,11 +69,25 @@ public class ButtonDropTarget extends TextView implements DropTarget, DragContro
         mSearchDropTargetBar = searchDropTargetBar;
     }
 
+    protected Drawable getCurrentDrawable() {
+        Drawable[] drawables = getCompoundDrawables();
+        for (int i = 0; i < drawables.length; ++i) {
+            if (drawables[i] != null) {
+                return drawables[i];
+            }
+        }
+        return null;
+    }
+
     public void onDrop(DragObject d) {
     }
 
+    public void onFlingToDelete(DragObject d, int x, int y, PointF vec) {
+        // Do nothing
+    }
+
     public void onDragEnter(DragObject d) {
-        d.dragView.setPaint(mHoverPaint);
+        d.dragView.setColor(mHoverColor);
     }
 
     public void onDragOver(DragObject d) {
@@ -76,7 +95,7 @@ public class ButtonDropTarget extends TextView implements DropTarget, DragContro
     }
 
     public void onDragExit(DragObject d) {
-        d.dragView.setPaint(null);
+        d.dragView.setColor(0);
     }
 
     public void onDragStart(DragSource source, Object info, int dragAction) {
@@ -95,6 +114,26 @@ public class ButtonDropTarget extends TextView implements DropTarget, DragContro
     public void getHitRect(android.graphics.Rect outRect) {
         super.getHitRect(outRect);
         outRect.bottom += mBottomDragPadding;
+    }
+
+    Rect getIconRect(int itemWidth, int itemHeight, int drawableWidth, int drawableHeight) {
+        DragLayer dragLayer = mLauncher.getDragLayer();
+
+        // Find the rect to animate to (the view is center aligned)
+        Rect to = new Rect();
+        dragLayer.getViewRectRelativeToSelf(this, to);
+        int width = drawableWidth;
+        int height = drawableHeight;
+        int left = to.left + getPaddingLeft();
+        int top = to.top + (getMeasuredHeight() - height) / 2;
+        to.set(left, top, left + width, top + height);
+
+        // Center the destination rect about the trash icon
+        int xOffset = (int) -(itemWidth - width) / 2;
+        int yOffset = (int) -(itemHeight - height) / 2;
+        to.offset(xOffset, yOffset);
+
+        return to;
     }
 
     @Override

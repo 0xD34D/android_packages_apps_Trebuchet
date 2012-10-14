@@ -22,6 +22,12 @@
     package="com.cyanogenmod.trebuchet"
     android:versionName="@string/application_version">
 
+    <original-package android:name="com.android.launcher2" />
+
+    <permission
+        android:name="com.android.launcher.permission.PRELOAD_WORKSPACE"
+        android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
+        android:protectionLevel="system|signature" />
     <permission
         android:name="com.android.launcher.permission.INSTALL_SHORTCUT"
         android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
@@ -52,11 +58,9 @@
     <uses-permission android:name="android.permission.SET_WALLPAPER_HINTS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.BIND_APPWIDGET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
     <uses-permission android:name="com.android.launcher.permission.WRITE_SETTINGS" />
-
-    <uses-sdk android:minSdkVersion="14"
-        android:targetSdkVersion="15" />
 
     <application
         android:name="com.cyanogenmod.trebuchet.LauncherApplication"
@@ -104,9 +108,22 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.cyanogenmod.trebuchet.preference.Preferences"
-            android:label="@string/preferences_title" />
+        <!-- Intent received used to prepopulate the default workspace. -->
+        <receiver
+            android:name="com.cyanogenmod.trebuchet.PreloadReceiver"
+            android:permission="com.android.launcher.permission.PRELOAD_WORKSPACE">
+            <intent-filter>
+                <action android:name="com.android.launcher.action.PRELOAD_WORKSPACE" />
+            </intent-filter>
+        </receiver>
 
+        <activity android:name="com.cyanogenmod.trebuchet.preference.Preferences"
+            android:label="@string/preferences_title">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="com.cyanogenmod.category.LAUNCHER_PREFERENCES" />
+            </intent-filter>
+        </activity>
         <!-- Intent received used to install shortcuts from other applications -->
         <receiver
             android:name="com.cyanogenmod.trebuchet.InstallShortcutReceiver"
@@ -132,5 +149,7 @@
             android:writePermission="com.android.launcher.permission.WRITE_SETTINGS"
             android:readPermission="com.android.launcher.permission.READ_SETTINGS" />
 
+        <meta-data android:name="android.nfc.disable_beam_default"
+                       android:value="true" />
     </application>
 </manifest>
